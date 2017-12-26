@@ -1,0 +1,35 @@
+---
+title: "Mirna's Corner"
+author: "Mirna van Hoek"
+date: "12/26/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The map shows places were I worked or lived during my life sofar. 
+The color indicates in what period of my life I stayed there. 
+The size of the circles is an indication of how long I worked or lived there.
+
+```{r library, echo=FALSE, warning=FALSE, error=FALSE}
+library(leaflet)
+```
+
+```{r define data, echo=FALSE}
+lngs <- c(5.165591, 5.868615, 6.052951, -122.204018, -105.267321, 5.175027, 4.959189, 4.765613)
+lats <- c(52.087255, 51.823974, 46.234032, 37.420272, 40.007916, 52.102721, 52.338992, 52.954313)
+cols <- c('orange', 'yellow', 'yellow', 'green', 'green', 'blue', 'violet','red')
+labels <- c("Physics, University of Utrecht", "Physics Radbout University Nijmegen", "CERN", "SLAC National Accelerator Laboratortory", "Physics University of Colorado Boulder", "KNMI (Royal Dutch Meteological Institute)", "Home town", "Birth place")
+nYears <- c(4, 5, 1, 2, 3, 13, 15, 18)
+df <- data.frame(lng=lngs, lat=lats, col=cols, label= labels, nYears=nYears)
+#df <- data.frame(lng=lngs, lat=lats)
+```
+
+```{r define leaflet, echo=FALSE, warning=FALSE, error=FALSE,message=FALSE}
+#df %>% leaflet() %>% addTiles() %>% addCircleMarkers(clusterOptions=markerClusterOptions(), weight=10, radius = sqrt(df$nYears)*10, color = df$col, popup = df$label) %>% addLegend(labels = c("youth", "master", "PhD", "postdoc", "work", "home town"), colors=c('red', 'orange', 'yellow', 'green', 'blue', 'violet'))
+df %>% leaflet() %>% addTiles() %>% addCircleMarkers( weight=10, radius = sqrt(df$nYears)*10, color = df$col, popup = df$label) %>% addLegend(labels = c("youth", "master", "PhD", "postdoc", "work", "home"), colors=c('red', 'orange', 'yellow', 'green', 'blue', 'violet'))
+#df %>% leaflet() %>% addTiles() %>% addMarkers() 
+
+```
