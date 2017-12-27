@@ -1,0 +1,79 @@
+---
+title: "Ozone and ozone hole"
+author: "Mirna van Hoek"
+date: "12/27/2017"
+output: ioslides_presentation
+logo: ozoneholePlot.jpg
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Ozone
+
+* is a colorless gas 
+* in the troposphere it causes smog
+* in the stratosphere it protects us from radiation.
+* amount is measured in Dobson Units (DU)
+
+## Ozone hole
+
+* occurs during Southern Hemisphere spring
+* is caused by chemical reactions with chlorine and bromine
+* amount of ozone < 220 DU
+
+There are two ways to measure ozone hole size:
+
+* The amount of ozone (DU)
+* The area covered by the ozone hole (km^2)
+
+
+## Ozone hole size (DU)
+
+```{r libs, warning=FALSE, error=FALSE, message=FALSE}
+library(dplyr)
+library(plotly)
+```
+
+```{r read ozone and temperature data, warning=FALSE, message=FALSE}
+ozoneFile <- "/Users/mirna/Cousera/Data_Science/datasciencecoursera/ShinyTests/ozonholeData/ozonholeSize.csv"
+ozoneMinFile <- "/Users/mirna/Cousera/Data_Science/datasciencecoursera/ShinyTests/ozonholeData/ozonMinimum.csv"
+minStratTempFile <- "/Users/mirna/Cousera/Data_Science/datasciencecoursera/ShinyTests/ozonholeData/minStratTemp.csv"
+ozoneSizeDF <- read.csv2(ozoneFile, sep="", dec=".", skip = 5, stringsAsFactors = FALSE)
+ozoneMinDF <- read.csv2(ozoneMinFile, sep="", dec=".", skip = 5, stringsAsFactors = FALSE)
+minStratTempDF <- read.csv2(minStratTempFile, sep="", dec=".", skip=6, stringsAsFactors = FALSE)
+ozoneSizeDF <- ozoneSizeDF %>% select(Date, ozoneSize=Data) %>% mutate(Date=as.Date(Date))
+ozoneMinDF <- ozoneMinDF %>% select(Date, ozoneMin=Data) %>% mutate(Date=as.Date(Date))
+minStratTempDF <- minStratTempDF %>% select(Date, minStratTemp=Data) %>% mutate(Date=as.Date(Date))
+combiDF <- inner_join(ozoneSizeDF, ozoneMinDF, by = "Date") %>% inner_join(., minStratTempDF, by = "Date")
+filteredDF <- filter(combiDF, Date>=as.Date("2017-01-01"), ozoneSize>=0)
+```
+
+
+```{r plot OzoneMin, warning=FALSE, error=FALSE}
+f <- list(
+  family = "Courier New, monospace",
+  size = 18,
+  color = "#7f7f7f")
+
+plot_ly( x=filteredDF$Date, y=filteredDF$ozoneMin, type="scatter", mode="markers", color =filteredDF$minStratTemp, marker=list(colorbar = list(title="Minimum Stratospheric Temperature (K)", titleside="right"))) %>% layout(xaxis=list(title="time", titlefont=f, range=c('2017-01-01', '2017-12-31')), yaxis=list(title="Ozone amount (DU)", titlefont=f))
+```
+
+## Ozone hole size (km^2)
+
+```{r plot ozoneSize, warning=FALSE, error=FALSE}
+
+plot_ly( x=filteredDF$Date, y=filteredDF$ozoneSize, type="scatter", mode="markers", color =filteredDF$minStratTemp, marker=list(colorbar = list(title="Minimum Stratospheric Temperature (K)", titleside="right"))) %>% layout(xaxis=list(title="time", titlefont=f, range=c('2017-01-01', '2017-12-31')), yaxis=list(text="Ozone hole area (km^2)", titlefont=f))
+```
+
+## Conclusion
+
+The minimum amount of ozone and the maximum area covered by the ozone hole are not reached on the same day.
+
+**Reference** 
+
+_Source: [NASA Ozone Watch](https://ozonewatch.gsfc.nasa.gov)_
+
+
+
