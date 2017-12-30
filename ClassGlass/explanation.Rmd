@@ -1,0 +1,71 @@
+---
+title: "explanation"
+output: html_document
+---
+
+## The aim
+
+Please fill in the properties of the glass that you recovered from the crime scene and find out what most likely the type of glass is that you found.<br>
+Good luck!
+
+## Background
+
+### Dataset
+
+The guys from the lab have created a DB containing properties and type of pieces of glass found at crime scenes (dataset fgl in MASS package).
+
+
+**Glass properties**
+<br>
+
+* Refractive Index (RI) (1.518xxxx)
+* Percenages by weight of oxides
+  * Sodium (Na)
+  * Magnese (Mg)
+  * Aluminium (Al)
+  * Silicon (Si)
+  * Potasium (K)
+  * Calcium (Ca)
+  * Barium (Ba)
+  * Iron (Fe)
+
+
+**Glass types**
+<br>
+
+  * window float glass (WinF)
+  * window non-float glass (WinNF)
+  * vehicle window glass (Veh)
+  * containers (Con)
+  * tableware (Tabl)
+  * vehicle headlamps (Head)
+  
+
+  
+**References**
+<br><br>
+Venables, W. N. and Ripley, B. D. (2002) Modern Applied Statistics with S. Fourth edition. Springer.
+
+### Prediction
+<br>
+
+ * Model: Random forest
+ 
+ ```{r model, eval=FALSE}
+  fitControl <- trainControl(method = "cv", number = 5)
+  fitRF <- train(type ~ ., data = fgl,
+                 method = "rf",
+                 trControl = fitControl)
+```
+
+ * new data: input from sliders
+ * prediction given as probabilities
+ 
+```{r prediction, eval=FALSE}
+predict(trainedModel,
+        newdata = inputs,
+        type = "prob",
+        predict.all = TRUE)
+```
+
+
